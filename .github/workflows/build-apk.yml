@@ -18,18 +18,36 @@ jobs:
         sudo apt-get update
         sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip \
           autoconf libtool pkg-config zlib1g-dev libncurses5-dev \
-          libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          libncursesw5-dev cmake libffi-dev libssl-dev
 
-    - name: Install buildozer
+    - name: Install python-for-android
       run: |
-        pip install buildozer
+        pip install python-for-android
         pip install cython
 
-    - name: Build APK
-      run: buildozer android debug
+    - name: Build APK with p4a
+      run: |
+        p4a apk \
+          --private android \
+          --package=com.yourname.chat \
+          --name="极简聊天" \
+          --version=1.0 \
+          --bootstrap=sdl2 \
+          --requirements=python3==3.10.0,kivy==2.3.0 \
+          --permission=INTERNET \
+          --permission=ACCESS_NETWORK_STATE \
+          --permission=ACCESS_WIFI_STATE \
+          --arch=arm64-v8a \
+          --arch=armeabi-v7a \
+          --android-api=30 \
+          --ndk-version=25b \
+          --sdk-dir=/home/runner/.buildozer/android/platform/android-sdk \
+          --ndk-dir=/home/runner/.buildozer/android/platform/android-ndk-r25b \
+          --dist-name=chat \
+          --release
 
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
         name: chat-app-apk
-        path: bin/*.apk
+        path: dist/*.apk
