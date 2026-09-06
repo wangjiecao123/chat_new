@@ -23,11 +23,14 @@ jobs:
     - name: Install Java 17
       run: |
         sudo apt-get install -y openjdk-17-jdk
-        sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-        java -version
+        export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+        echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+        $JAVA_HOME/bin/java -version
 
     - name: Install Android SDK
       run: |
+        export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+        export PATH=$JAVA_HOME/bin:$PATH
         mkdir -p ~/android-sdk
         cd ~/android-sdk
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
@@ -38,8 +41,8 @@ jobs:
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
         echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
         echo "PATH=$PATH" >> $GITHUB_ENV
-        yes | sdkmanager --licenses > /dev/null 2>&1 || true
-        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+        yes | $JAVA_HOME/bin/java -jar $ANDROID_SDK_ROOT/cmdline-tools/latest/lib/sdkmanager-classpath.jar --licenses 2>/dev/null || true
+        $JAVA_HOME/bin/java -jar $ANDROID_SDK_ROOT/cmdline-tools/latest/lib/sdkmanager-classpath.jar "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
     - name: Install python-for-android
       run: |
@@ -50,6 +53,8 @@ jobs:
       run: |
         export ANDROID_SDK_ROOT=~/android-sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+        export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+        export PATH=$JAVA_HOME/bin:$PATH
         p4a apk \
           --private android \
           --package=com.yourname.chat \
