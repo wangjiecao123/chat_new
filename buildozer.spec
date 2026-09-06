@@ -8,7 +8,7 @@ package.name = chat
 package.domain = com.simplechat
 
 # 源码目录
-source.dir = .
+source.dir = android
 source.include_exts = py,png,jpg,kv,atlas
 
 # 版本
