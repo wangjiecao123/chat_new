@@ -22,17 +22,16 @@ jobs:
 
     - name: Install Android SDK
       run: |
-        mkdir -p ~/android-sdk
+        mkdir -p ~/android-sdk/cmdline-tools
         cd ~/android-sdk
         wget -q https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
         unzip commandlinetools-linux-11076708_latest.zip
-        mkdir -p cmdline-tools
-        mv tools cmdline-tools/latest
+        mv cmdline-tools ~/android-sdk/cmdline-tools/latest
         export ANDROID_SDK_ROOT=~/android-sdk
         export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
         echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
         echo "PATH=$PATH" >> $GITHUB_ENV
-        yes | sdkmanager --licenses
+        yes | sdkmanager --licenses > /dev/null 2>&1 || true
         sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
     - name: Install python-for-android
