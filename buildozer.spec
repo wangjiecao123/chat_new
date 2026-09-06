@@ -15,7 +15,7 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.0
 
 # 需求（重要：需要包含common目录）
-requirements = python3==3.10.0,kivy==2.3.0
+requirements = python3,kivy
 
 # Android权限（必须有网络权限）
 android.permissions = INTERNET,ACCESS_NETWORK_STATE,ACCESS_WIFI_STATE
