@@ -15,15 +15,16 @@ source.include_exts = py,png,jpg,kv,atlas
 version = 1.0
 
 # 需求（重要：需要包含common目录）
-requirements = python3,kivy
+requirements = python3==3.10.0,kivy==2.3.0
 
 # Android权限（必须有网络权限）
 android.permissions = INTERNET,ACCESS_NETWORK_STATE,ACCESS_WIFI_STATE
 
 # Android API级别
 android.api = 30
+android.sdk_build_tools = 30.0.3
 android.minapi = 21
-android.ndk = 23b
+android.ndk = 25b
 
 # 默认图标（可以自己准备图片）
 # android.icon = icon.png
