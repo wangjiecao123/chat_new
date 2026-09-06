@@ -16,9 +16,15 @@ jobs:
     - name: Install system dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip openjdk-17-jdk python3-pip \
+        sudo apt-get install -y git zip unzip python3-pip \
           autoconf libtool pkg-config zlib1g-dev libncurses5-dev \
           libncursesw5-dev cmake libffi-dev libssl-dev wget
+
+    - name: Install Java 17
+      run: |
+        sudo apt-get install -y openjdk-17-jdk
+        sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+        java -version
 
     - name: Install Android SDK
       run: |
