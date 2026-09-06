@@ -13,19 +13,13 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install system dependencies
+    - name: Install Java 17 + dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y git zip unzip python3-pip \
+        sudo apt-get install -y openjdk-17-jdk git zip unzip python3-pip \
           autoconf libtool pkg-config zlib1g-dev libncurses5-dev \
           libncursesw5-dev cmake libffi-dev libssl-dev wget
-
-    - name: Install Java 17
-      run: |
-        sudo apt-get install -y openjdk-17-jdk
-        export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-        echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
-        $JAVA_HOME/bin/java -version
+        echo "JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64" >> $GITHUB_ENV
 
     - name: Install Android SDK
       run: |
@@ -38,23 +32,21 @@ jobs:
         mkdir -p cmdline-tools/latest
         mv cmdline-tools/* cmdline-tools/latest/ 2>/dev/null || true
         export ANDROID_SDK_ROOT=~/android-sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
+        export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
         echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
         echo "PATH=$PATH" >> $GITHUB_ENV
-        yes | $JAVA_HOME/bin/java -jar $ANDROID_SDK_ROOT/cmdline-tools/latest/lib/sdkmanager-classpath.jar --licenses 2>/dev/null || true
-        $JAVA_HOME/bin/java -jar $ANDROID_SDK_ROOT/cmdline-tools/latest/lib/sdkmanager-classpath.jar "platform-tools" "platforms;android-30" "build-tools;30.0.3"
+        yes | sdkmanager --licenses > /dev/null 2>&1 || true
+        sdkmanager "platform-tools" "platforms;android-30" "build-tools;30.0.3"
 
-    - name: Install python-for-android
+    - name: Install p4a
       run: |
-        pip install python-for-android
-        pip install cython
+        pip install python-for-android cython
 
-    - name: Build APK with p4a
+    - name: Build APK
       run: |
         export ANDROID_SDK_ROOT=~/android-sdk
-        export PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin
         export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-        export PATH=$JAVA_HOME/bin:$PATH
+        export PATH=$JAVA_HOME/bin:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$PATH
         p4a apk \
           --private android \
           --package=com.yourname.chat \
